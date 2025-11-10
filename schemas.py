@@ -12,7 +12,7 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 # Example schemas (replace with your own):
 
@@ -27,6 +27,12 @@ class User(BaseModel):
     age: Optional[int] = Field(None, ge=0, le=120, description="Age in years")
     is_active: bool = Field(True, description="Whether user is active")
 
+class ProductRetailer(BaseModel):
+    name: str
+    price: float
+    url: Optional[str] = None
+    is_best: bool = False
+
 class Product(BaseModel):
     """
     Products collection schema
@@ -36,7 +42,27 @@ class Product(BaseModel):
     description: Optional[str] = Field(None, description="Product description")
     price: float = Field(..., ge=0, description="Price in dollars")
     category: str = Field(..., description="Product category")
+    image: Optional[str] = Field(None, description="Product image URL")
+    rating: Optional[float] = Field(None, ge=0, le=5, description="Average rating out of 5")
+    specs: Optional[List[str]] = Field(default_factory=list, description="Key specifications")
+    retailers: Optional[List[ProductRetailer]] = Field(default_factory=list, description="Retailer options")
     in_stock: bool = Field(True, description="Whether product is in stock")
+
+class Message(BaseModel):
+    role: str = Field(..., description="user or assistant")
+    content: str
+    conversation_id: Optional[str] = None
+    related_product_id: Optional[str] = None
+
+class Conversation(BaseModel):
+    title: str
+    user_id: Optional[str] = None
+    last_message_preview: Optional[str] = None
+
+class TrendItem(BaseModel):
+    title: str
+    category: str
+    product_id: Optional[str] = None
 
 # Add your own schemas here:
 # --------------------------------------------------
